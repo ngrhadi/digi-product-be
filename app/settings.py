@@ -28,9 +28,6 @@ POSTGRES_PORT = int(os.getenv('POSTGRES_PORT'))
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
-# Take environment variables from .env file
-environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
