@@ -18,10 +18,10 @@ poetry config virtualenvs.in-project true
 poetry shell
 
 # run migrations
-python manage.py migrate
+poetry run python manage.py migrate
 
 # create superuser
-python manage.py createsuperuser
+poetry run python manage.py createsuperuser
 
 # running project
 poetry run python manage.py runserver

@@ -11,23 +11,22 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
-import environ
+from dotenv import load_dotenv
 from pathlib import Path
 
-# Environment variables
-env = environ.Env(
-    DEBUG=(bool, False),
-    SECRET_KEY=(str, ""),
-    ALLOWED_HOSTS=(list, []),
-    POSTGRES_DB=(str, ""),
-    POSTGRES_HOST=(str, ""),
-    POSTGRES_PORT=(int, ""),
-    POSTGRES_USER=(str, ""),
-    POSTGRES_PASSWORD=(str, ""),
-)
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+DEBUG = os.getenv('DEBUG') == 'True'
+SECRET_KEY = os.getenv('SECRET_KEY')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+POSTGRES_PORT = int(os.getenv('POSTGRES_PORT'))
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
@@ -36,12 +35,12 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG", default=True)
+DEBUG = DEBUG
 
-ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+ALLOWED_HOSTS = ALLOWED_HOSTS
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -95,11 +94,11 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("POSTGRES_DB"),
-        "HOST": env("POSTGRES_HOST"),
-        "PORT": env("POSTGRES_PORT"),
-        "USER": env("POSTGRES_USER"),
-        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "NAME": POSTGRES_DB,
+        "HOST": POSTGRES_HOST,
+        "PORT": POSTGRES_PORT,
+        "USER": POSTGRES_USER,
+        "PASSWORD": POSTGRES_PASSWORD,
     }
 }
 
