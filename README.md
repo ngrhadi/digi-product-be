@@ -23,6 +23,10 @@ poetry run python manage.py migrate
 # create superuser
 poetry run python manage.py createsuperuser
 
+# init dummy data sample
+poetry run python manage.py runsql sql/master_product.sql
+
 # running project
 poetry run python manage.py runserver
 ```
+
