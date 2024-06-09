@@ -19,15 +19,19 @@ RUN pip install --no-cache-dir poetry
 # Copy project files
 COPY pyproject.toml poetry.lock ./
 
-# Install dependencies
-RUN poetry shell && \ poetry config virtualenvs.create false \
+# Configure Poetry and install dependencies
+RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
 
 # Copy the Django project
 COPY . .
 
+# Run any necessary commands, like migrations or SQL scripts
+RUN poetry run python manage.py runsql /app/sql/master_product.sql
+RUN poetry run python manage.py migrate
+
 # Expose the port
-EXPOSE 8000
+EXPOSE 8800
 
 # Run the Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8800"]

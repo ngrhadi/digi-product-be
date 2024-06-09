@@ -1,4 +1,7 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'master_product') THEN
+        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 create table master_product (
 	id uuid NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -320,3 +323,7 @@ insert into master_product (id, product_name, price, store_name, quantity, total
 insert into master_product (id, product_name, price, store_name, quantity, total_selling, category, description, country, location, image_url) values ('08cda444-e987-4a72-bac9-9276d28dc49c', 'Video Editing Software License Key', 806.44, 'Trudeo', 1, 0, 'video tutorial', 'Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.
 
 Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.', 'Indonesia', 'Palembang', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHBSURBVDjLlVM9aMJQEP6eNEF0sbiUouLgoLRkKXS1IG4dC6Xg2LXQRXATHbqVzq4iQjc3sVscnUSnYIdIB9GC4L/xL333IEFsBj04jpf77nt3l+8x0zRxaMViMbTdbtXVahVer9dYLBY/0+k0mcvltEPsGRzMMIyPQCAQ9ng8IAJd14OdTuedp+4PsS4ngslkctFoNNBsNgWB2+3GaDQKOWEdCTgY2WyW9Xo9QbBcLoUfTSDLsoiMMUFgkRxNwHeAdDpt+nw+8EUKp29O5rhEvnEoigJJktBqteD3+0/rgINNulHTNCjzGR5++1Bvb67x+vLF/dmxg3K5HOZB2+12MncxfzAYxJ25wcXjE5ixZCu9m/wufybfUqnLUqmUtwmomAtKi0ajcrVaxWAwQKFQEHOfK1dQajUwrwdSrw8ZEiKRSC4ej0NV1TwjJXI2IxaLyZwA4/FYFHL12T6fz+3o9XrhcrmQyWTQbreZ6IAnZS5dVCoVEpFYmFVEPpvNxJm+0zmRSIhoj0AJunU4HNogq3C/EwtHuqBfaxNQkhJ8NpGwAPtxs9n8c5ug2+2iXq/bojl0S41URKPuv2Dm9JxPsT8W0mO2IJm2EgAAAABJRU5ErkJggg==');
+
+    END IF;
+END $$;
+
