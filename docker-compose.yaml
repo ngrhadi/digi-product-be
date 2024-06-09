@@ -3,11 +3,11 @@ version: '3.8'
 services:
   web:
     build: .
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8800"]
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - "8800:8800"
     environment:
       - DEBUG
       - SECRET_KEY
