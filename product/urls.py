@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views.product import MasterProductView
-from .views.auth import RegisterView, LoadUserView
+from .views.auth import RegisterView, LoadUserView, LoginView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -31,6 +31,7 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
     #   login and register
+    path('auth/login/', LoginView.as_view()),
     path('register/', RegisterView.as_view()),
     path('account/user/', LoadUserView.as_view()),
 

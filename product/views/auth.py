@@ -1,17 +1,10 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.db import connection
-from django.views import View
-from django.contrib.auth.hashers import make_password, check_password
-from uuid import uuid4
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
-import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.contrib.auth.models import User
 from ..serializers import UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
 
 class RegisterView(APIView):
     permission_classes = (permissions.AllowAny, )
@@ -65,11 +58,52 @@ class RegisterView(APIView):
                     {'error': 'Passwords do not match'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        except:
+        except Exception as e:
             return Response(
-                {'error': 'Something went wrong when trying to register account'},
+                {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+class LoginView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        try:
+            data = request.data
+            username = data.get('username')
+            password = data.get('password')
+
+            if not username or not password:
+                return Response(
+                    {'error': 'Please provide both username and password'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            user = authenticate(request, username=username, password=password)
+
+            if user is None:
+                return Response(
+                    {'error': 'Invalid credentials'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            user_info = {
+                'id': user.id,
+                'user': UserSerializer(user).data,
+                'access_token': access_token,
+                'refresh_token': str(refresh)
+            }
+
+            return Response(user_info, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class LoadUserView(APIView):
     def get(self, request, format=None):
