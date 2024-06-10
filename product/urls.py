@@ -37,5 +37,5 @@ urlpatterns = [
 
     #   product
     path('master_products/', MasterProductView.as_view(), name='master_product_list_create'),
-    path('master_products/<uuid:product_id>/', MasterProductView.as_view(), name='master_product_detail'),
+    path('master_products/?id=<product_id>&category=<category>&location=<location>&product_name=<product_name>&quantity=<quantity>&total_selling=<total_selling>', MasterProductView.as_view(), name='master_product_detail'),
 ]

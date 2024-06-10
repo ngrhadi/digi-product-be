@@ -1,25 +1,65 @@
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 from uuid import uuid4
+from rest_framework.views import APIView
 from django.views import View
 import json
+from rest_framework import status, permissions
+from uuid import UUID
+from ..models import MasterProduct
 
-class MasterProductView(View):
-    def get(self, request, product_id=None):
-        with connection.cursor() as cursor:
+
+
+class MasterProductView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        try:
+            # Extract query parameters
+            product_id = request.GET.get('id')
+            category = request.GET.get('category')
+            location = request.GET.get('location')
+            product_name = request.GET.get('product_name')
+            quantity = request.GET.get('quantity')
+            total_selling = request.GET.get('total_selling')
+
+            # Assuming you want to filter based on these parameters
+            filters = {}
             if product_id:
-                cursor.execute("SELECT * FROM master_product WHERE id = %s", [product_id])
-                product = cursor.fetchone()
-                if product is None:
-                    return JsonResponse({'error': 'Product not found'}, status=404)
-                columns = [col[0] for col in cursor.description]
-                product = dict(zip(columns, product))
-                return JsonResponse(product)
-            else:
-                cursor.execute("SELECT * FROM master_product")
-                columns = [col[0] for col in cursor.description]
-                products = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                return JsonResponse(products, safe=False)
+                try:
+                    filters['id'] = UUID(product_id)
+                except ValueError:
+                    return JsonResponse({'error': 'Invalid product_id'}, status=400)
+            if category:
+                filters['category'] = category
+            if location:
+                filters['location'] = location
+            if product_name:
+                filters['product_name__icontains'] = product_name
+            if quantity:
+                try:
+                    filters['quantity'] = int(quantity)
+                except ValueError:
+                    return JsonResponse({'error': 'Invalid quantity'}, status=400)
+            if total_selling:
+                try:
+                    filters['total_selling'] = int(total_selling)
+                except ValueError:
+                    return JsonResponse({'error': 'Invalid total selling'}, status=400)
+
+            products = MasterProduct.objects.filter(**filters)
+
+            # Serialize the results to JSON (assuming you have a suitable method)
+            product_list = list(products.values())
+
+            return JsonResponse(product_list, safe=False, status=200)
+        except Exception as e:
+            return JsonResponse(
+                {'error': str(e)},
+                status=500
+            )
 
     def post(self, request):
         data = json.loads(request.body)  # Assuming the data comes in JSON format
